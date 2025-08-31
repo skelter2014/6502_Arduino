@@ -88,21 +88,53 @@ void writeEEPROM_fromBuffer(unsigned int startAddress, byte* buffer, int bufferS
 /*
  * Read the contents of the EEPROM and print them to the serial monitor.
  */
+/*
+ * Read the contents of the EEPROM and print them to the serial monitor.
+ */
 void printContents(int firstAddress, int lastAddress) {
   Serial.println("\n--- EEPROM Contents ---");
   for (int base = firstAddress; base <= lastAddress; base += 16) {
+    // Correctly declare a local array to hold 16 bytes of data
     byte data[16];
     for (int offset = 0; offset <= 15; offset += 1) {
       data[offset] = readEEPROM(base + offset);
     }
-    char buf[82];
-    sprintf(buf, "%07x:  %02x %02x %02x %02x %02x %02x %02x %02x   %02x %02x %02x %02x %02x %02x %02x %02x",
-            base, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],
+    
+    // Declare a local char array to buffer each line
+    char buf[120]; // Using a safe buffer size.
+    
+    // Print the address and the first 8 bytes
+    sprintf(buf, "%07x:  %02x %02x %02x %02x %02x %02x %02x %02x",
+            base, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+    Serial.print(buf);
+
+    // Print the separator and the remaining 8 bytes
+    sprintf(buf, "   %02x %02x %02x %02x %02x %02x %02x %02x",
             data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15]);
     Serial.println(buf);
   }
   Serial.println("-----------------------\n");
 }
+
+
+/*
+//  * Read the contents of the EEPROM and print them to the serial monitor.
+//  */
+// void printContents(int firstAddress, int lastAddress) {
+//   Serial.println("\n--- EEPROM Contents ---");
+//   for (int base = firstAddress; base <= lastAddress; base += 16) {
+//     byte data[16];
+//     for (int offset = 0; offset <= 15; offset += 1) {
+//       data[offset] = readEEPROM(base + offset);
+//     }
+//     char buf[120];
+//     sprintf(buf, "%07x:  %02x %02x %02x %02x %02x %02x %02x %02x   %02x %02x %02x %02x %02x %02x %02x %02x",
+//             base, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],
+//             data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15]);
+//     Serial.println(buf);
+//   }
+//   Serial.println("-----------------------\n");
+// }
 
 void setup() {
   pinMode(SHIFT_DATA, OUTPUT);
